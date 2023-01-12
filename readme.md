@@ -20,6 +20,8 @@ npm run test
 
 ## API
 
+http://localhost:8000
+
 ```
-GET /api/v1/:ip/info
+GET /api/v1/proxies/:ip/info
 ```
