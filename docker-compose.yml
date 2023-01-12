@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: ./server/.
+    image: server
+    depends_on:
+      - postgres
+    restart: on-failure
+    environment:
+      PORT: 3000
+    volumes:
+      - type: bind
+        source: ./server
+        target: /server
+    working_dir: /server
+    ports:
+      - 8000:3000
+    networks:
+      - application_network
+    command: |
+      npm run start:dev
+
+  postgres:
+    image: postgres:13.0
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "6543:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - application_network
+    restart: unless-stopped
+    command: postgres -c logging_collector=on -c log_statement=mod
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  application_network:
+    ipam:
+      config:
+        - subnet: 172.16.2.0/24
